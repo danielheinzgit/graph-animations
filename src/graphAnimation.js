@@ -1,21 +1,29 @@
 var GraphAnimation = /** @class */ (function () {
     function GraphAnimation(canvas) {
         this.canvas = canvas;
-        this.fullscreen();
-        this.context = this.canvas.getContext('2d');
+        this.setupCanvas();
         this.graph = new Graph();
     }
     /**
-     * Sets the size of the canvas to the size of the window.
+     * Sets the size of the canvas to the size of the window, scales for high resolution screens.
      */
-    GraphAnimation.prototype.fullscreen = function () {
-        this.canvas.width = document.body.clientWidth;
-        this.canvas.height = document.body.clientHeight;
+    GraphAnimation.prototype.setupCanvas = function () {
+        // Get the device pixel ratio of the screen
+        this.dpr = window.devicePixelRatio || 1;
+        // Get the inner width and height of the browser window and set the size of the canvas to those values times the DPR
+        this.canvas.width = window.innerWidth * this.dpr;
+        this.canvas.height = window.innerHeight * this.dpr;
+        // Squish the canvas through CSS to its software pixel size
+        this.canvas.style.width = window.innerWidth.toString();
+        this.canvas.style.height = window.innerHeight.toString();
+        // Set up context
+        this.context = this.canvas.getContext('2d');
+        this.context.scale(this.dpr, this.dpr);
     };
     /**
      * Generates a graph, using a random number generator, while applying several constraints
      */
-    GraphAnimation.prototype.generateVertices = function () {
+    GraphAnimation.prototype.generateSquare = function () {
         var v1 = new Vertex(new Vector2(300, 300));
         var v2 = new Vertex(new Vector2(500, 300));
         var v3 = new Vertex(new Vector2(300, 500));

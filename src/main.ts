@@ -3,5 +3,5 @@ const canvas = document.createElement('canvas');
 container?.appendChild(canvas);
 
 let a = new GraphAnimation(canvas);
-a.generateVertices();
+a.generateSquare();
 a.draw();

@@ -2,27 +2,37 @@ class GraphAnimation {
     canvas: HTMLCanvasElement;
     context: CanvasRenderingContext2D | null;
     graph: Graph<Vector2>;
+    dpr: number;
     
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.setupCanvas();
-        this.context = this.canvas.getContext('2d');
         this.graph = new Graph();
     }
 
     /**
-     * @TODO display high dpi
-     * Sets the size of the canvas to the size of the window.
+     * Sets the size of the canvas to the size of the window, scales for high resolution screens.
      */
     setupCanvas(): void {
-        this.canvas.width = document.body.clientWidth;
-        this.canvas.height = document.body.clientHeight;
+        // Get the device pixel ratio of the screen
+        this.dpr = window.devicePixelRatio || 1;        
+
+        // Get the inner width and height of the browser window and set the size of the canvas to those values times the DPR
+        this.canvas.width = window.innerWidth * this.dpr;
+        this.canvas.height = window.innerHeight * this.dpr;
+        // Squish the canvas through CSS to its software pixel size
+        this.canvas.style.width = window.innerWidth.toString();
+        this.canvas.style.height = window.innerHeight.toString();
+        
+        // Set up context
+        this.context = this.canvas.getContext('2d');
+        this.context.scale(this.dpr, this.dpr);
     }
 
     /**
      * Generates a graph, using a random number generator, while applying several constraints
      */
-    generateVertices(): void {
+    generateSquare(): void {
         let v1: Vertex<Vector2> = new Vertex(new Vector2(300, 300));
         let v2: Vertex<Vector2> = new Vertex(new Vector2(500, 300));
         let v3: Vertex<Vector2> = new Vertex(new Vector2(300, 500));
