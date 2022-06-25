@@ -2,7 +2,7 @@ var GraphAnimation = /** @class */ (function () {
     function GraphAnimation(canvas) {
         this.canvas = canvas;
         this.setupCanvas();
-        this.graph = new Graph();
+        this.points = new Graph();
     }
     /**
      * Sets the size of the canvas to the size of the window, scales for high resolution screens.
@@ -23,26 +23,28 @@ var GraphAnimation = /** @class */ (function () {
     /**
      * Generates a graph, using a random number generator, while applying several constraints
      */
-    GraphAnimation.prototype.generateSquare = function () {
-        var v1 = new Vertex(new Vector2(300, 300));
-        var v2 = new Vertex(new Vector2(500, 300));
-        var v3 = new Vertex(new Vector2(300, 500));
-        var v4 = new Vertex(new Vector2(500, 500));
-        this.graph.addVertex(v1);
-        this.graph.addVertex(v2);
-        this.graph.addVertex(v3);
-        this.graph.addVertex(v4);
-        this.graph.addEdge(v1, v2);
-        this.graph.addEdge(v2, v3);
-        this.graph.addEdge(v3, v4);
-        this.graph.addEdge(v4, v1);
+    GraphAnimation.prototype.generateParabola = function () {
+        var v1 = new Vertex(new Vector2(200, 200));
+        var v2 = new Vertex(new Vector2(250, 350));
+        var v3 = new Vertex(new Vector2(300, 400));
+        var v4 = new Vertex(new Vector2(350, 350));
+        var v5 = new Vertex(new Vector2(400, 200));
+        this.points.addVertex(v1);
+        this.points.addVertex(v2);
+        this.points.addVertex(v3);
+        this.points.addVertex(v4);
+        this.points.addVertex(v5);
+        this.points.addEdge(v1, v2);
+        this.points.addEdge(v2, v3);
+        this.points.addEdge(v3, v4);
+        this.points.addEdge(v4, v5);
     };
     /**
      * @TODO randomise the choice
      * @returns A random color from a specified array of colors suitable for vertices.
      */
     GraphAnimation.prototype.pickVertexColor = function () {
-        return Color.Bluebonnet;
+        return Color.OffWhite;
     };
     /**
      * Helper method for the GraphAnimation.draw() method.
@@ -52,35 +54,49 @@ var GraphAnimation = /** @class */ (function () {
     GraphAnimation.prototype.fillBackground = function (color) {
         if (this.context != null) {
             this.context.fillStyle = color;
-            this.context.rect(0, 0, this.canvas.width, this.canvas.height);
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         }
     };
     /**
      * Helper method for the GraphAnimation.draw() method.
-     * @param location Where the center of the circle is.
-     * @param radius The radius of the circle.
+     * @param data
      */
-    GraphAnimation.prototype.drawCircle = function (location, radius, color) {
+    GraphAnimation.prototype.drawCircle = function (data) {
         if (this.context != null) {
-            this.context.fillStyle = color;
+            this.context.strokeStyle = data.color;
             this.context.beginPath();
-            this.context.arc(location.x, location.y, radius, 0, Math.PI * 2, true);
+            this.context.arc(data.location.x, data.location.y, data.radius, 0, Math.PI * 2, true);
             this.context.closePath();
-            this.context.fill();
+            this.context.stroke();
+        }
+    };
+    GraphAnimation.prototype.drawLine = function (data) {
+        if (this.context != null) {
+            this.context.strokeStyle = data.color;
+            this.context.beginPath();
+            this.context.moveTo(data.origin.x, data.origin.y);
+            this.context.lineTo(data.destination.x, data.destination.y);
+            this.context.closePath();
+            this.context.stroke();
         }
     };
     /**
      * @TODO a lot
      * Draws the whole graph
      */
-    GraphAnimation.prototype.draw = function () {
+    GraphAnimation.prototype.draw = function (vertexToCirlce, edgeToLine) {
         if (this.context != null) {
-            console.log("Drawing");
-            var radius = 5;
-            this.fillBackground(Color.OffWhite);
-            for (var i = 0; i < this.graph.vertices.length; i++) {
-                var vector = this.graph.vertices[i].value;
-                this.drawCircle(vector, radius, this.pickVertexColor());
+            this.fillBackground(Color.Anthracite);
+            for (var i = 0; i < this.points.vertices.length; i++) {
+                var v = this.points.vertices[i];
+                var vertexData = vertexToCirlce(v);
+                this.drawCircle(vertexData);
+                for (var j = 0; j < v.outVertices.length; j++) {
+                    console.log("Edge");
+                    var w = v.outVertices[j];
+                    var edgeData = edgeToLine(v, w, vertexData.radius, vertexToCirlce(w).radius);
+                    this.drawLine(edgeData);
+                }
             }
         }
     };

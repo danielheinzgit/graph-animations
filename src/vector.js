@@ -40,6 +40,37 @@ var Vector2 = /** @class */ (function () {
     Vector2.prototype.equals = function (other) {
         return this.x == other.x && this.y == other.y;
     };
+    /**
+     * Adds two vectors together.
+     * @param other The vector that is to add to the calling object.
+     * @returns A new vector with the result of the addition.
+     */
+    Vector2.prototype.add = function (other) {
+        return new Vector2(this.x + other.x, this.y + other.y);
+    };
+    /**
+     * Negates the coordinate values of the vector.
+     * @returns A new negated vector.
+     */
+    Vector2.prototype.negate = function () {
+        return new Vector2(-this.x, -this.y);
+    };
+    /**
+     * Normalises the vector by scaling it to the unit distance.
+     * @returns A new normalised vector.
+     */
+    Vector2.prototype.normalise = function () {
+        var scalar = 1 / this.distanceFromOrigin();
+        return this.scale(scalar);
+    };
+    /**
+     * Scales the vector by the provided value.
+     * @param scalar The factor by which to multiply both coordinates.
+     * @returns A new scaled vector.
+     */
+    Vector2.prototype.scale = function (scalar) {
+        return new Vector2(this.x * scalar, this.y * scalar);
+    };
     Vector2.prototype.toString = function () {
         return "Vector2<" + this.x + ", " + this.y + ">";
     };

@@ -48,6 +48,41 @@ class Vector2 implements Comparable<Vector2> {
         return this.x == other.x && this.y == other.y;
     }
 
+    /**
+     * Adds two vectors together.
+     * @param other The vector that is to add to the calling object.
+     * @returns A new vector with the result of the addition.
+     */
+    add(other: Vector2): Vector2 {
+        return new Vector2(this.x + other.x, this.y + other.y);
+    }
+
+    /**
+     * Negates the coordinate values of the vector.
+     * @returns A new negated vector.
+     */
+    negate(): Vector2 {
+        return new Vector2(-this.x, -this.y);
+    }
+
+    /**
+     * Normalises the vector by scaling it to the unit distance.
+     * @returns A new normalised vector.
+     */
+    normalise(): Vector2 {
+        let scalar: number = 1 / this.distanceFromOrigin();
+        return this.scale(scalar);
+    }
+
+    /**
+     * Scales the vector by the provided value.
+     * @param scalar The factor by which to multiply both coordinates.
+     * @returns A new scaled vector.
+     */
+    scale(scalar: number): Vector2 {
+        return new Vector2(this.x * scalar, this.y * scalar);
+    }
+
     toString(): string {
         return "Vector2<" + this.x + ", " + this.y + ">";
     }
